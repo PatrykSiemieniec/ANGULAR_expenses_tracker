@@ -8,6 +8,7 @@ const routes: Routes = [
     redirectTo: '/expenses',
     pathMatch: 'full',
   },
+ 
 ];
 
 @NgModule({
