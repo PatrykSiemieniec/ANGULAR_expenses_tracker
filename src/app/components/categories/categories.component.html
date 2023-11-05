@@ -1,0 +1,51 @@
+<div class="container-sm mt-5">
+  <div class="row text-center justify-content-center">
+    <h2 class="col-12">Add Category</h2>
+    <div class="col-6">
+      <div class="input-group">
+        <input type="text" id="name" class="form-control" #newCategory />
+        <button class="btn btn-success" (click)="onAdd()">Add</button>
+      </div>
+    </div>
+  </div>
+  <div class="row text-center mt-5">
+    <h2 class="col-12">Categories</h2>
+  </div>
+  <div class="row">
+    <div class="col-12 text-center">
+      <div *ngIf="categories.length === 0">
+        <h4 class="mt-4">Add new categories!</h4>
+      </div>
+      <form [formGroup]="categoriesForm">
+        <div *ngFor="let category of categories">
+          <div class="input-group mb-3">
+            <div class="input-group-text">
+              <input
+                class="form-check-input mt-0"
+                type="checkbox"
+                [formControlName]="category.ID"
+              />
+            </div>
+            <input
+              class="form-control"
+              type="text"
+              [value]="category.name"
+              #name
+              (input)="onEditCategory(category.ID, name)"
+            />
+          
+          </div>
+        </div>
+        <div class="row text-start" *ngIf="categories.length !== 0">
+          <div class="col-12">
+            <button (click)="onDelete()" type="button" class="btn btn-danger">
+              Delete
+            </button>
+            <button (click)="onConfirmEditing()" *ngIf="isEditingStarted" class=" ms-3 btn btn-outline-primary" type="button" >Save Changes</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<router-outlet></router-outlet>

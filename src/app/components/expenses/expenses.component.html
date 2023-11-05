@@ -1,0 +1,102 @@
+<div class="container-sm">
+  <div class="row mt-4">
+    <div class="col-12">
+      <button
+        class="btn btn-primary"
+        (click)="onAddExpense()"
+        *ngIf="!isFormOpened"
+      >
+        Add Expense
+      </button>
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
+<div
+  class="container-sm p-2 mt-4 text-center bg-secondary text-white rounded-1"
+>
+  <div class="row align-items-center">
+    <div class="col-12">Name</div>
+    <div class="col-12">Description</div>
+    <div class="col-3">Price</div>
+    <div class="col-3">Date</div>
+    <div class="col-3">Category</div>
+    <div class="col-3">Action</div>
+  </div>
+</div>
+<div class="container-sm mt-6">
+  <div class="row">
+    <div class="col-4">
+      <div class="col-12">
+        <label class="form-label" for="filtr">Filter</label>
+
+        <input
+          [(ngModel)]="filterValue"
+          (input)="filterExpenses()"
+          type="text"
+          class="form-control"
+        />
+      </div>
+    </div>
+    <div class="col-6 mt-3 d-flex flex-wrap gap-2 align-items-end">
+      <button
+        (click)="onSelectFilterTime('day')"
+        class="btn btn-outline-primary"
+      >
+        Today
+      </button>
+      <button
+        (click)="onSelectFilterTime('week')"
+        class="btn btn-outline-primary "
+      >
+        Week
+      </button>
+      <button
+        (click)="onSelectFilterTime('month')"
+        class="btn btn-outline-primary "
+      >
+        Month
+      </button>
+      <button
+        (click)="onSelectFilterTime('all')"
+        class="btn btn-outline-primary  "
+      >
+        All
+      </button>
+    </div>
+  </div>
+</div>
+<div
+  class="container-sm text-center border border-2 rounded-1 mt-4 p-1 mb-4"
+  *ngFor="let expense of expenses; let i = index"
+>
+  <div class="row align-items-center">
+    <div class="col-12">
+      <strong>{{ expense.name }}</strong>
+    </div>
+    <div class="col-12">
+      <i>{{ expense.description }}</i>
+    </div>
+
+    <div class="col-3">{{ expense.price | currency : "PLN" }}</div>
+    <div class="col-3">{{ expense.date | date : "shortDate" }}</div>
+    <div class="col-3">{{ expense.category }}</div>
+    <div class="col-3">
+      <button
+        class="btn btn-danger bi bi-trash3 m-2"
+        (click)="onRemove(i)"
+        [disabled]="isFormOpened"
+      ></button>
+      <button
+        class="btn btn-primary bi bi-pencil-square"
+        (click)="onStartEditing(i)"
+        [disabled]="isFormOpened"
+      ></button>
+    </div>
+  </div>
+</div>
+<div class="container-sm text-center mt-5">
+  <div class="row align-items-center" *ngIf="!expenses.length">
+    <h2 class="col-12">Add some expenses!</h2>
+  </div>
+</div>

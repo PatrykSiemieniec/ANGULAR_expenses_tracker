@@ -1,0 +1,37 @@
+<div class="container-sm text-center">
+  <h2 class="mt-4">Settings</h2>
+  <div class="row">
+    <div class="col-12 d-flex justify-content-center">
+      <form (ngSubmit)="onSubmit()" #settings="ngForm">
+        <label class="form-label" for="monthBudget">Set Monthly Budget</label>
+        <input
+          class="form-control"
+          type="number"
+          id="monthlBudget"
+          ngModel
+          name="monthly"
+          required
+        />
+        <button
+          type="submit"
+          class="btn btn-primary mt-2"
+          [disabled]="!settings.form.valid"
+        >
+          Save
+        </button>
+      </form>
+    </div>
+    <div class="col-12 mt-4">
+      <h3>Your settings summary</h3>
+      <div class="row">
+        <div class="col-12">
+          Monthly Budget: {{ monthly | currency : "PLN" }}
+        </div>
+        <div class="col-12">
+          Weekly Budget: ~ {{ weekly | currency : "PLN" }}
+        </div>
+        <div class="col-12">Daily Budget: ~ {{ daily | currency : "PLN" }}</div>
+      </div>
+    </div>
+  </div>
+</div>

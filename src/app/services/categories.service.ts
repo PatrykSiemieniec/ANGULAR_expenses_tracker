@@ -1,0 +1,64 @@
+import { Injectable } from '@angular/core';
+import { Category } from '../models/category.model';
+import { BehaviorSubject, Subject } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class CategoriesService {
+  categories: Category[] = [
+    new Category(0, 'Electronics'),
+    new Category(1, 'Food'),
+    new Category(2, 'Home'),
+    new Category(3, 'Fuel'),
+    new Category(4, 'Other'),
+    new Category(5, 'Restaurant'),
+    new Category(6, 'Going out'),
+  ];
+  categoriesChanges = new Subject<Category[]>();
+  lastId: number = this.categories.length - 1;
+
+  constructor() {}
+
+  getCategories() {
+    return this.categories.slice();
+  }
+  addCategory(category: string) {
+    this.resetId();
+    if (category) {
+      this.categories.push(new Category(this.lastId + 1, category));
+    }
+    this.categoriesChanges.next(this.categories.slice());
+  }
+  editCategory(ID: number, newCategory: string) {
+    this.categories[ID].name = newCategory;
+    this.categoriesChanges.next(this.categories.slice());
+  }
+  deleteCategory(index: number) {
+    const oneExpenseDeleted = this.categories.filter(
+      (item) => item.ID !== index
+    );
+
+    this.categories = oneExpenseDeleted;
+    this.resetId();
+
+    this.categoriesChanges.next(this.categories.slice());
+  }
+  deleteCategories(indexes: number[]) {
+    const multipleExpensesDeleted = this.categories.filter(
+      (category) => !indexes.includes(category.ID)
+    );
+
+    this.categories = multipleExpensesDeleted;
+    this.resetId();
+    this.categoriesChanges.next(this.categories.slice());
+  }
+
+  private resetId() {
+    const newCategories = this.categories.map(
+      (category, index) => new Category(index, category.name)
+    );
+    this.lastId = this.categories.length - 1;
+    this.categories = newCategories;
+  }
+}

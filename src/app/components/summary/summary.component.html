@@ -1,0 +1,73 @@
+<div class="container-sm text-center mt-4" *ngIf="!budget.monthly">
+  <div class="row">
+    <div class="col-12">
+      <h2>Add your monthly budget first!</h2>
+      <button class="btn btn-primary mt-4" routerLink="/settings">Go to Settings</button>
+    </div>
+  </div>
+</div>
+<div class="container-sm mt-4" *ngIf="budget.monthly">
+  <div class="row">
+    <div class="col-12 text-center">
+      <h2>You spent from the beginning</h2>
+      <h3>{{ totalExpenses$ | currency }}</h3>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-10 text-center">
+      <h2>Your monthly budget</h2>
+      <div class="progress" role="progressbar" style="height: 40px">
+        <div
+          class="progress-bar"
+          [ngClass]="{
+            'bg-danger': monthlyBudget.isMoreThanBudget,
+            'bg-warning': monthlyBudget.isCloseToBudget
+          }"
+          [ngStyle]="{ width: monthlyBudget.budgetPercentString }"
+        ></div>
+      </div>
+      <h4 class="mt-2">
+        {{ monthlyExpenses$ }} / {{ budget.monthly }}
+        {{ "(" + monthlyBudget.budgetPercentString + ")" }}
+      </h4>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-10 text-center mt-4">
+      <h2>Your weekly budget</h2>
+      <div class="progress" role="progressbar" style="height: 40px">
+        <div
+          class="progress-bar"
+          [ngClass]="{
+            'bg-danger': weeklyBudget.isMoreThanBudget,
+            'bg-warning': weeklyBudget.isCloseToBudget
+          }"
+          [ngStyle]="{ width: weeklyBudget.budgetPercentString }"
+        ></div>
+      </div>
+      <h4 class="mt-2">
+        {{ weeklyExpenses$ }} / {{ budget.weekly }}
+        {{ "(" + weeklyBudget.budgetPercentString + ")" }}
+      </h4>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-10 text-center mt-4">
+      <h2>Your daily budget</h2>
+      <div class="progress" role="progressbar" style="height: 40px">
+        <div
+          class="progress-bar"
+          [ngClass]="{
+            'bg-danger': dailyBudget.isMoreThanBudget,
+            'bg-warning': dailyBudget.isCloseToBudget
+          }"
+          [ngStyle]="{ width: dailyBudget.budgetPercentString }"
+        ></div>
+      </div>
+      <h4 class="mt-2">
+        {{ dailyExpenses$ }} / {{ budget.daily }}
+        {{ "(" + dailyBudget.budgetPercentString + ")" }}
+      </h4>
+    </div>
+  </div>
+</div>
