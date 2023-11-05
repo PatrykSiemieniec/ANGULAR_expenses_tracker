@@ -8,24 +8,25 @@ import { setExpense, updateExpense } from '../store/setLocalStorage.actions';
   providedIn: 'root',
 })
 export class ExpensesService {
-  private expenses: Expense[] = [
-    new Expense('TV', 4000, 'AGD', new Date('11-03-2023'), 'Samsun Smart TV'),
-    new Expense(
-      'Chair',
-      800,
-      'Furniture',
-      new Date('11-25-2023'),
-      'Wooden Chair'
-    ),
-    new Expense(
-      'Laptop',
-      3500,
-      'Electronic',
-      new Date('11-05-2023'),
-      'Acer Nitro 5'
-    ),
-    new Expense('Mirror', 150, 'Furniture', new Date('11-03-2023')),
-  ];
+  private expenses: Expense[] = []
+  // [
+  //   new Expense('TV', 4000, 'AGD', new Date('11-03-2023'), 'Samsun Smart TV'),
+  //   new Expense(
+  //     'Chair',
+  //     800,
+  //     'Furniture',
+  //     new Date('11-25-2023'),
+  //     'Wooden Chair'
+  //   ),
+  //   new Expense(
+  //     'Laptop',
+  //     3500,
+  //     'Electronic',
+  //     new Date('11-05-2023'),
+  //     'Acer Nitro 5'
+  //   ),
+  //   new Expense('Mirror', 150, 'Furniture', new Date('11-03-2023')),
+  // ];
 
   expensesChanged = new Subject<Expense[]>();
   isFormOpen = new Subject<boolean>();
