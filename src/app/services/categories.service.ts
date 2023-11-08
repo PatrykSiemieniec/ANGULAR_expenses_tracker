@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Category } from '../models/category.model';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { Subject, map } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { setCategories } from '../store/categories/setCategories.actions';
+import { getCategories } from '../store/categories/getCategories.actions';
 
 @Injectable({
   providedIn: 'root',
@@ -16,9 +19,21 @@ export class CategoriesService {
     new Category(6, 'Going out'),
   ];
   categoriesChanges = new Subject<Category[]>();
-  lastId: number = this.categories.length - 1;
+  lastId: number = this.categories?.length - 1;
 
-  constructor() {}
+  constructor(private store: Store<{ getCategories: Category[] }>) {
+    this.store.dispatch(getCategories());
+    this.store
+      .select('getCategories')
+      .pipe(
+        map((category) => {
+          return category.map(
+            (category) => new Category(category.ID, category.name)
+          );
+        })
+      )
+      .subscribe((categories) => (this.categories = categories));
+  }
 
   getCategories() {
     return this.categories.slice();
@@ -26,9 +41,12 @@ export class CategoriesService {
   addCategory(category: string) {
     this.resetId();
     if (category) {
-      this.categories.push(new Category(this.lastId + 1, category));
+      const newCategories = new Category(this.lastId + 1, category);
+      this.store.dispatch(setCategories({ newCategory: newCategories }));
+      this.store.dispatch(getCategories());
+      this.categoriesChanges.next(this.categories.slice());
+      // this.categories.push();
     }
-    this.categoriesChanges.next(this.categories.slice());
   }
   editCategory(ID: number, newCategory: string) {
     this.categories[ID].name = newCategory;

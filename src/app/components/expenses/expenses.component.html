@@ -28,9 +28,10 @@
   <div class="row d-flex flex-column flex-md-row">
     <div class="col-md-4 col-10 ">
       <div class="col-12">
-        <label class="form-label" for="filtr">Filter</label>
+        <label class="form-label" for="filter">Filter</label>
 
         <input
+        id="filter"
           [(ngModel)]="filterValue"
           (input)="filterExpenses()"
           type="text"

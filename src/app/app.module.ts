@@ -13,8 +13,11 @@ import { SettingsModule } from './modules/settings.module';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
-import { setLocalStorgeReducer } from './store/setLocalStorage.reducer';
-import { getLocalStorgeReducer } from './store/getLocalStorage.reducer';
+
+import { getExpensesReducer } from './store/expenses/getExpenses.reducer';
+import { setExpensesReducer } from './store/expenses/setExpenses.reducer';
+import { getCategoriesReducer } from './store/categories/getCategories.reducer';
+import { setCategoriesReducer } from './store/categories/setCategories.reducer';
 
 @NgModule({
   declarations: [AppComponent, NotFoundPageComponent, HeaderComponent],
@@ -28,8 +31,10 @@ import { getLocalStorgeReducer } from './store/getLocalStorage.reducer';
     SettingsModule,
     BrowserAnimationsModule,
     StoreModule.forRoot({
-      setLocalStorage: setLocalStorgeReducer,
-      getLocalStorage: getLocalStorgeReducer,
+      getExpenses: getExpensesReducer,
+      setExpenses: setExpensesReducer,
+      getCategories: getCategoriesReducer,
+      setCategories: setCategoriesReducer,
     }),
   ],
   providers: [],

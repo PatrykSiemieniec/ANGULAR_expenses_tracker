@@ -1,32 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Expense } from '../models/expenses.model';
-import { BehaviorSubject, Observable, Subject, map } from 'rxjs';
+import { BehaviorSubject, Subject, map } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { getExpense } from '../store/getLocalStorage.actions';
-import { setExpense, updateExpense } from '../store/setLocalStorage.actions';
+import { getExpense } from '../store/expenses/getExpenses.actions'
+import { setExpense, updateExpense } from '../store/expenses/setExpenses.actions';
 @Injectable({
   providedIn: 'root',
 })
 export class ExpensesService {
-  private expenses: Expense[] = []
-  // [
-  //   new Expense('TV', 4000, 'AGD', new Date('11-03-2023'), 'Samsun Smart TV'),
-  //   new Expense(
-  //     'Chair',
-  //     800,
-  //     'Furniture',
-  //     new Date('11-25-2023'),
-  //     'Wooden Chair'
-  //   ),
-  //   new Expense(
-  //     'Laptop',
-  //     3500,
-  //     'Electronic',
-  //     new Date('11-05-2023'),
-  //     'Acer Nitro 5'
-  //   ),
-  //   new Expense('Mirror', 150, 'Furniture', new Date('11-03-2023')),
-  // ];
+  private expenses: Expense[] = [];
 
   expensesChanged = new Subject<Expense[]>();
   isFormOpen = new Subject<boolean>();
@@ -37,11 +19,11 @@ export class ExpensesService {
     this.getCurrentMonthPrices()
   );
 
-  constructor(private store: Store<{ getLocalStorage: Expense[] }>) {
+  constructor(private store: Store<{ getExpenses: Expense[] }>) {
     this.isFormOpen.next(false);
     this.store.dispatch(getExpense());
     this.store
-      .select('getLocalStorage')
+      .select('getExpenses')
       .pipe(
         map((expense) => {
           return expense.map(
@@ -57,6 +39,7 @@ export class ExpensesService {
         })
       )
       .subscribe((expenses) => (this.expenses = expenses));
+      this.updateData()
   }
 
   getExpenses() {
@@ -113,11 +96,7 @@ export class ExpensesService {
     const filteredExpenses = this.expenses.filter((item, idx) => idx !== index);
     this.store.dispatch(updateExpense({ updatedExpenses: filteredExpenses }));
     this.store.dispatch(getExpense());
-    this.expensesChanged.next(this.expenses.slice());
-    this.sumOfPrices.next(this.getAllPrices());
-    this.sumOfDailyPrices.next(this.getCurrentDayPrices());
-    this.sumOfWeeklyPrices.next(this.getCurrentWeekPrices());
-    this.sumOfMonthlyPrices.next(this.getCurrentWeekPrices());
+    this.updateData();
   }
 
   addExpense(expense: Expense) {
@@ -130,13 +109,10 @@ export class ExpensesService {
         expense.description
       )
     );
-    this.expensesChanged.next(this.expenses.slice());
-    this.sumOfPrices.next(this.getAllPrices());
-    this.sumOfDailyPrices.next(this.getCurrentDayPrices());
-    this.sumOfWeeklyPrices.next(this.getCurrentWeekPrices());
-    this.sumOfMonthlyPrices.next(this.getCurrentMonthPrices());
+
     this.store.dispatch(setExpense({ newExpense: expense }));
     this.store.dispatch(getExpense());
+    this.updateData();
   }
   updateExpense(index: number, editedExpense: Expense) {
     this.expenses[index] = new Expense(
@@ -148,11 +124,7 @@ export class ExpensesService {
     );
     this.store.dispatch(updateExpense({ updatedExpenses: this.expenses }));
     this.store.dispatch(getExpense());
-    this.expensesChanged.next(this.expenses.slice());
-    this.sumOfPrices.next(this.getAllPrices());
-    this.sumOfDailyPrices.next(this.getCurrentDayPrices());
-    this.sumOfWeeklyPrices.next(this.getCurrentWeekPrices());
-    this.sumOfMonthlyPrices.next(this.getCurrentMonthPrices());
+    this.updateData();
   }
 
   filterExpense(searchValue: string) {
@@ -187,6 +159,14 @@ export class ExpensesService {
       default:
         return;
     }
+  }
+
+  private updateData() {
+    this.expensesChanged.next(this.expenses.slice());
+    this.sumOfPrices.next(this.getAllPrices());
+    this.sumOfDailyPrices.next(this.getCurrentDayPrices());
+    this.sumOfWeeklyPrices.next(this.getCurrentWeekPrices());
+    this.sumOfMonthlyPrices.next(this.getCurrentMonthPrices());
   }
 
   private reducePrice(expenses: Expense[]) {

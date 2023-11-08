@@ -17,6 +17,7 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   isFormOpened = false;
   filterValue: string = '';
 
+
   constructor(
     private expensesService: ExpensesService,
     private router: Router,
