@@ -13,24 +13,35 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   @ViewChild('settings') settingsForm!: NgForm;
 
-  monthlyBudgetSubscription!: Subscription
+  monthlyBudgetSubscription!: Subscription;
 
   monthly!: number;
   weekly!: number;
   daily!: number;
 
+  selectedCurrency: string = 'PLN';
+
   onSubmit() {
     this.settingsService.setSettings(this.settingsForm.value.monthly);
   }
+  onSelect(){
+    this.settingsService.setCurrency(this.selectedCurrency);
+  }
+  
 
   ngOnInit(): void {
-    this.monthlyBudgetSubscription = this.settingsService.monthly.subscribe((budget: Budget) => {
-      this.monthly = budget.monthly;
-      this.weekly = budget.weekly;
-      this.daily = budget.daily;
-    });
+    this.monthlyBudgetSubscription = this.settingsService.monthly.subscribe(
+      (budget: Budget) => {
+        this.monthly = budget.monthly;
+        this.weekly = budget.weekly;
+        this.daily = budget.daily;
+      }
+    );
+    this.settingsService.currency.subscribe((currency: string) => {
+      this.selectedCurrency = currency;
+    })
   }
   ngOnDestroy(): void {
-      this.monthlyBudgetSubscription.unsubscribe()
+    this.monthlyBudgetSubscription.unsubscribe();
   }
 }

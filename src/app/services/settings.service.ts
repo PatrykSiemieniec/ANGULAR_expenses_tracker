@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
-export interface Budget{
-    monthly: number,
-    weekly: number,
-    daily: number
+export interface Budget {
+  monthly: number;
+  weekly: number;
+  daily: number;
 }
 
 @Injectable({
@@ -12,6 +12,8 @@ export interface Budget{
 })
 export class SettingsService {
   monthly = new BehaviorSubject<Budget>(this.getSettings());
+  currency = new BehaviorSubject<string>(this.getCurrency());
+ 
 
   setSettings(monthlyBudget: number) {
     localStorage.setItem('monthlyBudget', JSON.stringify(monthlyBudget));
@@ -25,11 +27,23 @@ export class SettingsService {
     }
     return this.calculateWeeklyAndDaily(budget);
   }
+  setCurrency(currency: string) {
+    localStorage.setItem('currency', currency);
+    this.currency.next(currency)
+  }
+  getCurrency() {
+    const storedCurrency = localStorage.getItem('currency');
+
+    if (storedCurrency) {
+      return storedCurrency
+    }
+    return 'PLN';
+  }
 
   private calculateWeeklyAndDaily(monthlyBudget: number) {
     const weekly = monthlyBudget / 4;
-    const daily = +(monthlyBudget / 30).toFixed(2)
+    const daily = +(monthlyBudget / 30).toFixed(2);
 
-    return {monthly: monthlyBudget, weekly, daily};
+    return { monthly: monthlyBudget, weekly, daily };
   }
 }

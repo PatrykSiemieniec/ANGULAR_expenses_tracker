@@ -35,6 +35,7 @@ import { setCategoriesReducer } from './store/categories/setCategories.reducer';
       setExpenses: setExpensesReducer,
       getCategories: getCategoriesReducer,
       setCategories: setCategoriesReducer,
+      
     }),
   ],
   providers: [],
