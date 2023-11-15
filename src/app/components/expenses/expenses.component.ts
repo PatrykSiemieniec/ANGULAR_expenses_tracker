@@ -1,9 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ExpensesService } from '../../services/expenses.service';
 import { Expense } from '../../models/expenses.model';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subscription, map } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
+import {
+  loadExpenses,
+  removeExpense,
+} from 'src/app/store/expenses/expenses.action';
+import { AppState } from 'src/app/store/app.state';
+import { selectAllExpenses } from 'src/app/store/expenses/expenses.selectors';
 
 @Component({
   selector: 'app-expenses',
@@ -17,29 +23,25 @@ export class ExpensesComponent implements OnInit, OnDestroy {
   isFormOpened = false;
   filterValue: string = '';
 
+  allExpenses$ = this.store.select(selectAllExpenses);
 
   constructor(
     private expensesService: ExpensesService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private store: Store<AppState>
   ) {}
 
   ngOnInit(): void {
-    this.expenseSubscription = this.expensesService.expensesChanged.subscribe(
-      (expenses: Expense[]) => {
-        this.expenses = expenses;
-      }
-    );
-    this.expenses = this.expensesService.getExpenses();
-
     this.formSubscription = this.expensesService.isFormOpen.subscribe(
       (isEditMode) => {
         this.isFormOpened = isEditMode;
       }
     );
+    this.store.dispatch(loadExpenses());
   }
   onRemove(index: number) {
-    this.expensesService.removeExpense(index);
+    this.store.dispatch(removeExpense({ id: index }));
   }
   onAddExpense() {
     this.router.navigate(['new'], {
@@ -58,7 +60,6 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     this.expensesService.filterExpenseByTime(time);
   }
   ngOnDestroy(): void {
-    // this.expenseSubscription.unsubscribe();
     this.formSubscription.unsubscribe();
   }
 }

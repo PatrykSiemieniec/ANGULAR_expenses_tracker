@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { Category } from '../models/category.model';
 import { Subject, map } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { setCategories } from '../store/categories/setCategories.actions';
-import { getCategories } from '../store/categories/getCategories.actions';
 
 @Injectable({
   providedIn: 'root',
@@ -22,17 +20,17 @@ export class CategoriesService {
   lastId: number = this.categories?.length - 1;
 
   constructor(private store: Store<{ getCategories: Category[] }>) {
-    this.store.dispatch(getCategories());
-    this.store
-      .select('getCategories')
-      .pipe(
-        map((category) => {
-          return category.map(
-            (category) => new Category(category.ID, category.name)
-          );
-        })
-      )
-      .subscribe((categories) => (this.categories = categories));
+    // this.store.dispatch(getCategories());
+    // this.store
+    //   .select('getCategories')
+    //   .pipe(
+    //     map((category) => {
+    //       return category.map(
+    //         (category) => new Category(category.ID, category.name)
+    //       );
+    //     })
+    //   )
+    //   .subscribe((categories) => (this.categories = categories));
   }
 
   getCategories() {
@@ -42,8 +40,8 @@ export class CategoriesService {
     this.resetId();
     if (category) {
       const newCategories = new Category(this.lastId + 1, category);
-      this.store.dispatch(setCategories({ newCategory: newCategories }));
-      this.store.dispatch(getCategories());
+      // this.store.dispatch(setCategories({ newCategory: newCategories }));
+      // this.store.dispatch(getCategories());
       this.categoriesChanges.next(this.categories.slice());
       // this.categories.push();
     }

@@ -14,6 +14,13 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { CategoriesService } from '../../../services/categories.service';
 import { Category } from '../../../models/category.model';
 import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
+import {
+  addExpense,
+  updateExpense,
+} from 'src/app/store/expenses/expenses.action';
+import { AppState } from 'src/app/store/app.state';
+import { selectExpenseByIndex } from 'src/app/store/expenses/expenses.selectors';
 
 @Component({
   selector: 'app-expenses-edit',
@@ -31,7 +38,8 @@ export class ExpensesEditComponent implements OnInit, OnDestroy {
     private expensesService: ExpensesService,
     private categoriesService: CategoriesService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private store: Store<AppState>
   ) {}
 
   ngOnInit(): void {
@@ -48,14 +56,17 @@ export class ExpensesEditComponent implements OnInit, OnDestroy {
     if (this.expensesForm.valid) {
       if (this.editMode) {
         this.expensesService.isFormOpen.next(false);
-        this.expensesService.updateExpense(
-          this.indexToEdit,
-          this.expensesForm.value
+        this.store.dispatch(
+          updateExpense({
+            newExpense: this.expensesForm.value,
+            id: this.indexToEdit,
+          })
         );
+
         this.router.navigate(['/expenses']);
       } else {
         this.expensesService.isFormOpen.next(false);
-        this.expensesService.addExpense(this.expensesForm.value);
+        this.store.dispatch(addExpense({ expense: this.expensesForm.value }));
         this.router.navigate(['../'], { relativeTo: this.route });
       }
     }
@@ -68,14 +79,17 @@ export class ExpensesEditComponent implements OnInit, OnDestroy {
     let expenseDescription: string | undefined = '';
     let expenseDate = new Date();
     if (this.editMode) {
-      const expense = this.expensesService.getExpense(this.indexToEdit);
-
-      console.log(expense);
-      expenseName = expense.name;
-      expensePrice = expense.price;
-      expenseCategory = expense.category;
-      expenseDescription = expense?.description;
-      expenseDate = expense.date;
+      this.store
+        .select(selectExpenseByIndex(this.indexToEdit))
+        .subscribe((expense) => {
+          if (expense) {
+            expenseName = expense.name;
+            expensePrice = expense.price;
+            expenseCategory = expense.category;
+            expenseDescription = expense?.description;
+            expenseDate = expense.date;
+          }
+        });
     }
 
     this.expensesForm = new FormGroup({

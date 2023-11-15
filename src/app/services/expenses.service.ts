@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Expense } from '../models/expenses.model';
-import { BehaviorSubject, Subject, map } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { getExpense } from '../store/expenses/getExpenses.actions'
-import { setExpense, updateExpense } from '../store/expenses/setExpenses.actions';
+import { selectAllExpenses } from '../store/expenses/expenses.selectors';
+import { AppState } from '../store/app.state';
+import { filterExpense } from '../store/expenses/expenses.action';
+
 @Injectable({
   providedIn: 'root',
 })
 export class ExpensesService {
   private expenses: Expense[] = [];
 
-  expensesChanged = new Subject<Expense[]>();
   isFormOpen = new Subject<boolean>();
   sumOfPrices = new BehaviorSubject<number>(this.getAllPrices());
   sumOfDailyPrices = new BehaviorSubject<number>(this.getCurrentDayPrices());
@@ -19,35 +20,20 @@ export class ExpensesService {
     this.getCurrentMonthPrices()
   );
 
-  constructor(private store: Store<{ getExpenses: Expense[] }>) {
+  constructor(private store: Store<AppState>) {
+    this.store.select(selectAllExpenses).subscribe((expenses) => {
+      return (this.expenses = expenses.map(
+        (expense: Expense) =>
+          new Expense(
+            expense.name,
+            expense.price,
+            expense.category,
+            new Date(expense.date)
+          )
+      ));
+    });
     this.isFormOpen.next(false);
-    this.store.dispatch(getExpense());
-    this.store
-      .select('getExpenses')
-      .pipe(
-        map((expense) => {
-          return expense.map(
-            (expense) =>
-              new Expense(
-                expense.name,
-                expense.price,
-                expense.category,
-                new Date(expense.date),
-                expense.description
-              )
-          );
-        })
-      )
-      .subscribe((expenses) => (this.expenses = expenses));
-      this.updateData()
-  }
-
-  getExpenses() {
-    return this.expenses.slice();
-  }
-
-  getExpense(index: number) {
-    return this.expenses[index];
+    this.updateData();
   }
 
   getAllPrices(): number {
@@ -92,46 +78,10 @@ export class ExpensesService {
     }
   }
 
-  removeExpense(index: number) {
-    const filteredExpenses = this.expenses.filter((item, idx) => idx !== index);
-    this.store.dispatch(updateExpense({ updatedExpenses: filteredExpenses }));
-    this.store.dispatch(getExpense());
-    this.updateData();
-  }
-
-  addExpense(expense: Expense) {
-    this.expenses.push(
-      new Expense(
-        expense.name,
-        expense.price,
-        expense.category,
-        new Date(expense.date),
-        expense.description
-      )
-    );
-
-    this.store.dispatch(setExpense({ newExpense: expense }));
-    this.store.dispatch(getExpense());
-    this.updateData();
-  }
-  updateExpense(index: number, editedExpense: Expense) {
-    this.expenses[index] = new Expense(
-      editedExpense.name,
-      editedExpense.price,
-      editedExpense.category,
-      new Date(editedExpense.date),
-      editedExpense.description
-    );
-    this.store.dispatch(updateExpense({ updatedExpenses: this.expenses }));
-    this.store.dispatch(getExpense());
-    this.updateData();
-  }
-
   filterExpense(searchValue: string) {
     const filteredExpenses = this.expenses.filter((item) =>
       item.name.toLowerCase().includes(searchValue)
     );
-    this.expensesChanged.next(filteredExpenses);
   }
   filterExpenseByTime(time: string) {
     switch (time) {
@@ -139,22 +89,28 @@ export class ExpensesService {
         const filteredExpensesByDay = this.expenses.filter(
           (item) => item.date.getDate() === new Date().getDate()
         );
-        this.expensesChanged.next(filteredExpensesByDay);
+        this.store.dispatch(
+          filterExpense({ filteredExpense: filteredExpensesByDay })
+        );
         break;
       case 'week':
         const filteredExpensesByWeek = this.expenses.filter((item) =>
           this.isInCurrentWeek(item.date)
         );
-        this.expensesChanged.next(filteredExpensesByWeek);
+        this.store.dispatch(
+          filterExpense({ filteredExpense: filteredExpensesByWeek })
+        );
         break;
       case 'month':
         const filteredExpensesByMonth = this.expenses.filter(
           (item) => item.date.getMonth() === new Date().getMonth()
         );
-        this.expensesChanged.next(filteredExpensesByMonth);
+        this.store.dispatch(
+          filterExpense({ filteredExpense: filteredExpensesByMonth })
+        );
         break;
       case 'all':
-        this.expensesChanged.next(this.expenses);
+        this.store.dispatch(filterExpense({ filteredExpense: this.expenses }));
         break;
       default:
         return;
@@ -162,7 +118,6 @@ export class ExpensesService {
   }
 
   private updateData() {
-    this.expensesChanged.next(this.expenses.slice());
     this.sumOfPrices.next(this.getAllPrices());
     this.sumOfDailyPrices.next(this.getCurrentDayPrices());
     this.sumOfWeeklyPrices.next(this.getCurrentWeekPrices());

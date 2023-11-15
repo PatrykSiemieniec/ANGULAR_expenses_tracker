@@ -26,12 +26,12 @@
 </div>
 <div class="container-sm mt-6">
   <div class="row d-flex flex-column flex-md-row">
-    <div class="col-md-4 col-10 ">
+    <div class="col-md-4 col-10">
       <div class="col-12">
         <label class="form-label" for="filter">Filter</label>
 
         <input
-        id="filter"
+          id="filter"
           [(ngModel)]="filterValue"
           (input)="filterExpenses()"
           type="text"
@@ -48,19 +48,19 @@
       </button>
       <button
         (click)="onSelectFilterTime('week')"
-        class="btn btn-outline-primary "
+        class="btn btn-outline-primary"
       >
         Week
       </button>
       <button
         (click)="onSelectFilterTime('month')"
-        class="btn btn-outline-primary "
+        class="btn btn-outline-primary"
       >
         Month
       </button>
       <button
         (click)="onSelectFilterTime('all')"
-        class="btn btn-outline-primary  "
+        class="btn btn-outline-primary"
       >
         All
       </button>
@@ -69,7 +69,7 @@
 </div>
 <div
   class="container-sm text-center border border-2 rounded-1 mt-4 p-1 mb-4"
-  *ngFor="let expense of expenses; let i = index"
+  *ngFor="let expense of allExpenses$ | async; let i = index"
 >
   <div class="row align-items-center">
     <div class="col-12">
@@ -97,7 +97,7 @@
   </div>
 </div>
 <div class="container-sm text-center mt-5">
-  <div class="row align-items-center" *ngIf="!expenses.length">
+  <div class="row align-items-center" *ngIf="!allExpenses$">
     <h2 class="col-12">Add some expenses!</h2>
   </div>
 </div>

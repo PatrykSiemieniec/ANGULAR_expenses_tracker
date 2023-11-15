@@ -13,11 +13,7 @@ import { SettingsModule } from './modules/settings.module';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { StoreModule } from '@ngrx/store';
-
-import { getExpensesReducer } from './store/expenses/getExpenses.reducer';
-import { setExpensesReducer } from './store/expenses/setExpenses.reducer';
-import { getCategoriesReducer } from './store/categories/getCategories.reducer';
-import { setCategoriesReducer } from './store/categories/setCategories.reducer';
+import { expensesReducer } from './store/expenses/expenses.reducer';
 
 @NgModule({
   declarations: [AppComponent, NotFoundPageComponent, HeaderComponent],
@@ -31,11 +27,7 @@ import { setCategoriesReducer } from './store/categories/setCategories.reducer';
     SettingsModule,
     BrowserAnimationsModule,
     StoreModule.forRoot({
-      getExpenses: getExpensesReducer,
-      setExpenses: setExpensesReducer,
-      getCategories: getCategoriesReducer,
-      setCategories: setCategoriesReducer,
-      
+      expenses: expensesReducer
     }),
   ],
   providers: [],
