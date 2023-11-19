@@ -3,22 +3,16 @@ import { Expense } from 'src/app/models/expenses.model';
 import {
   addExpense,
   filterExpense,
-  loadExpenses,
+  loadExpensesSuccess,
   removeExpense,
   updateExpense,
-} from './expenses.action';
+} from './expenses.actions';
 
 export const initialState: Expense[] = [];
 
 export const expensesReducer = createReducer(
   initialState,
-  on(loadExpenses, (state) => {
-    const expenses = localStorage.getItem('expenses');
-    if (expenses) {
-      state = JSON.parse(expenses);
-    }
-    return state;
-  }),
+
   on(addExpense, (state, { expense }) => {
     const updatedEpenses = [...state, expense];
     localStorage.setItem('expenses', JSON.stringify(updatedEpenses));
@@ -35,7 +29,8 @@ export const expensesReducer = createReducer(
     localStorage.setItem('expenses', JSON.stringify(updatedExpense));
     return updatedExpense;
   }),
-  on(filterExpense, (state, { filteredExpense }) => {
-    return filteredExpense;
+
+  on(loadExpensesSuccess, (state, { expenses }) => {
+    return expenses;
   })
 );

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, isDevMode } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { ExpensesModule } from './modules/expenses.module';
@@ -12,8 +12,12 @@ import { FormsModule } from '@angular/forms';
 import { SettingsModule } from './modules/settings.module';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 import { StoreModule } from '@ngrx/store';
 import { expensesReducer } from './store/expenses/expenses.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { ExpensesEffects } from './store/expenses/expenses.effects';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 @NgModule({
   declarations: [AppComponent, NotFoundPageComponent, HeaderComponent],
@@ -27,7 +31,12 @@ import { expensesReducer } from './store/expenses/expenses.reducer';
     SettingsModule,
     BrowserAnimationsModule,
     StoreModule.forRoot({
-      expenses: expensesReducer
+      expenses: expensesReducer,
+    }),
+    EffectsModule.forRoot([ExpensesEffects]),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
     }),
   ],
   providers: [],

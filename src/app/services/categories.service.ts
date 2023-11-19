@@ -19,19 +19,7 @@ export class CategoriesService {
   categoriesChanges = new Subject<Category[]>();
   lastId: number = this.categories?.length - 1;
 
-  constructor(private store: Store<{ getCategories: Category[] }>) {
-    // this.store.dispatch(getCategories());
-    // this.store
-    //   .select('getCategories')
-    //   .pipe(
-    //     map((category) => {
-    //       return category.map(
-    //         (category) => new Category(category.ID, category.name)
-    //       );
-    //     })
-    //   )
-    //   .subscribe((categories) => (this.categories = categories));
-  }
+  constructor() {}
 
   getCategories() {
     return this.categories.slice();

@@ -1,24 +1,29 @@
 import { createAction, props } from '@ngrx/store';
 import { Expense } from 'src/app/models/expenses.model';
 
-export const loadExpenses = createAction('[Expense] Load Expenses');
+export const loadExpenses = createAction('[Expense Page] Load Expenses');
 
 export const addExpense = createAction(
-  '[Expense] Add Expense',
+  '[Expense Page] Add Expense',
   props<{ expense: Expense }>()
 );
 
 export const removeExpense = createAction(
-  '[Expense] Remove Expense',
+  '[Expense Page] Remove Expense',
   props<{ id: number }>()
 );
 
 export const updateExpense = createAction(
-  '[Expense] Update Expense',
+  '[Expense Page] Update Expense',
   props<{ newExpense: Expense; id: number }>()
 );
 
 export const filterExpense = createAction(
-  '[Expense] Filter Expense',
-  props<{ filteredExpense: Expense[] }>()
+  '[Expense Page] Filter Expense',
+  props<{ providedString: string }>()
+);
+
+export const loadExpensesSuccess = createAction(
+  '[Expense API] Expenses Load Success',
+  props<{ expenses: Expense[] }>()
 );

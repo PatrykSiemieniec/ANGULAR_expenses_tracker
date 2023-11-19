@@ -18,7 +18,7 @@ import { Store } from '@ngrx/store';
 import {
   addExpense,
   updateExpense,
-} from 'src/app/store/expenses/expenses.action';
+} from 'src/app/store/expenses/expenses.actions';
 import { AppState } from 'src/app/store/app.state';
 import { selectExpenseByIndex } from 'src/app/store/expenses/expenses.selectors';
 

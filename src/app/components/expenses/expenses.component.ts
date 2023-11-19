@@ -1,15 +1,19 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ExpensesService } from '../../services/expenses.service';
-import { Expense } from '../../models/expenses.model';
-import { Observable, Subscription, map } from 'rxjs';
+
+import { Subscription, map } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import {
   loadExpenses,
   removeExpense,
-} from 'src/app/store/expenses/expenses.action';
+} from 'src/app/store/expenses/expenses.actions';
 import { AppState } from 'src/app/store/app.state';
-import { selectAllExpenses } from 'src/app/store/expenses/expenses.selectors';
+import {
+  selectAllExpenses,
+  selectFilteredExpenses,
+  selectFilteredExpensesByTime,
+} from 'src/app/store/expenses/expenses.selectors';
 
 @Component({
   selector: 'app-expenses',
@@ -17,8 +21,6 @@ import { selectAllExpenses } from 'src/app/store/expenses/expenses.selectors';
   styleUrls: ['./expenses.component.css'],
 })
 export class ExpensesComponent implements OnInit, OnDestroy {
-  expenses!: Expense[];
-  expenseSubscription!: Subscription;
   formSubscription!: Subscription;
   isFormOpened = false;
   filterValue: string = '';
@@ -54,10 +56,12 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     this.expensesService.isFormOpen.next(true);
   }
   filterExpenses() {
-    this.expensesService.filterExpense(this.filterValue);
+    this.allExpenses$ = this.store.select(
+      selectFilteredExpenses(this.filterValue)
+    );
   }
   onSelectFilterTime(time: string) {
-    this.expensesService.filterExpenseByTime(time);
+    this.allExpenses$ = this.store.select(selectFilteredExpensesByTime(time));
   }
   ngOnDestroy(): void {
     this.formSubscription.unsubscribe();

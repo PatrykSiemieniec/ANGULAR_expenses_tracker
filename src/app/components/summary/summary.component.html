@@ -1,16 +1,17 @@
-<div class="container-sm text-center mt-4" *ngIf="!budget.monthly">
+<!-- <div class="container-sm text-center mt-4" *ngIf="!budget.monthly">
   <div class="row">
     <div class="col-12">
       <h2>Add your monthly budget first!</h2>
       <button class="btn btn-primary mt-4" routerLink="/settings">Go to Settings</button>
     </div>
   </div>
-</div>
-<div class="container-sm mt-4" *ngIf="budget.monthly">
+</div> 
+*ngIf="budget.monthly"-->
+<div class="container-sm mt-4">
   <div class="row">
     <div class="col-12 text-center">
       <h2>You spent from the beginning</h2>
-      <h3>{{ totalExpenses$ | currency: 'PLN' }}</h3>
+      <h3>{{ totalExpenses$ | async }}</h3>
     </div>
   </div>
   <div class="row justify-content-center">
@@ -27,7 +28,7 @@
         ></div>
       </div>
       <h4 class="mt-2">
-        {{ monthlyExpenses$ }} / {{ budget.monthly }}
+        {{ monthlyExpenses$ | async }} / {{ budget.monthly }}
         {{ "(" + monthlyBudget.budgetPercentString + ")" }}
       </h4>
     </div>
@@ -46,7 +47,7 @@
         ></div>
       </div>
       <h4 class="mt-2">
-        {{ weeklyExpenses$ }} / {{ budget.weekly }}
+        {{ weeklyExpenses$ | async }} / {{ budget.weekly }}
         {{ "(" + weeklyBudget.budgetPercentString + ")" }}
       </h4>
     </div>
@@ -65,7 +66,7 @@
         ></div>
       </div>
       <h4 class="mt-2">
-        {{ dailyExpenses$ }} / {{ budget.daily }}
+        {{ dailyExpenses$ | async }} / {{ budget.daily }}
         {{ "(" + dailyBudget.budgetPercentString + ")" }}
       </h4>
     </div>
