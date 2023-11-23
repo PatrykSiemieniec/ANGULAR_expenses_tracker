@@ -4,21 +4,22 @@ import { initSettings, setBudget, setCurrency } from './settings.actions';
 
 export const initialState: Settings = {
   currency: 'PLN',
-  budget: 0,
+  budget: 1000,
 };
 
 export const settingsReducer = createReducer(
   initialState,
   on(initSettings, (state) => {
     const prevSettings = localStorage.getItem('settings');
-    let updatedSettings;
+
     if (prevSettings) {
-      updatedSettings = JSON.parse(prevSettings);
+      state = JSON.parse(prevSettings);
     } else {
-      updatedSettings = initialState;
+      state = initialState;
       localStorage.setItem('settings', JSON.stringify(initialState));
     }
-    return updatedSettings;
+
+    return state;
   }),
   on(setBudget, (state, { budget }) => {
     const updatedSettings = { ...state, budget };
