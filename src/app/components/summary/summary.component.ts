@@ -1,19 +1,22 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-
 import { Observable, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
+
 import {
   selectDailyExpenses,
   selectExpensesPrices,
   selectMonthExpenses,
   selectWeekExpenses,
 } from 'src/app/store/expenses/expenses.selectors';
-import { loadExpenses } from 'src/app/store/expenses/expenses.actions';
-import { AppState } from 'src/app/store/app.state';
-import { calculateBudget } from 'src/app/shared/calculate-budget';
 import { selectCalculatedBudgets } from 'src/app/store/settings/settings.selectors';
+
+import { loadExpenses } from 'src/app/store/expenses/expenses.actions';
 import { initSettings } from 'src/app/store/settings/settings.actions';
+
+import { calculateBudget } from 'src/app/shared/calculate-budget';
 import { Budget, CalculatedBudget } from 'src/app/shared/types';
+
 @Component({
   selector: 'app-summary',
   templateUrl: './summary.component.html',
@@ -74,11 +77,9 @@ export class SummaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-  
-    this.budgetSubscription.unsubscribe()
-    this.monthlyBudgetSubscription.unsubscribe()
-    this.weeklyBudgetSubscription.unsubscribe()
-    this.dailyBudgetSubscription.unsubscribe()
-
+    this.budgetSubscription.unsubscribe();
+    this.monthlyBudgetSubscription.unsubscribe();
+    this.weeklyBudgetSubscription.unsubscribe();
+    this.dailyBudgetSubscription.unsubscribe();
   }
 }

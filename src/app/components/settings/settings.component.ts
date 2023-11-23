@@ -1,7 +1,10 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { NgForm } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app.state';
+
+import { NgForm } from '@angular/forms';
+
 import {
   selectCalculatedBudgets,
   selectCurrency,
@@ -12,7 +15,7 @@ import {
   setBudget,
   setCurrency,
 } from 'src/app/store/settings/settings.actions';
-import { Subscription } from 'rxjs';
+
 
 @Component({
   selector: 'app-settings',

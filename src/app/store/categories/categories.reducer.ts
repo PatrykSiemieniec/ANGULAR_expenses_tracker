@@ -35,8 +35,12 @@ export const categoriesReducer = createReducer(
     return updatedCategories;
   }),
   on(deleteCategory, (state, { ID }) => {
-    const stateCopy = [...state];
-    const updatedState = stateCopy.filter((category) => category.ID !== ID);
+    const updatedState = state
+      .filter((category) => category.ID !== ID)
+      .map((category, index) => ({
+        ...category,
+        ID: index,
+      }));
     localStorage.setItem('categories', JSON.stringify(updatedState));
     return updatedState;
   }),

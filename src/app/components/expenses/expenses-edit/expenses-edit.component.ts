@@ -1,26 +1,21 @@
-import {
-  AfterContentInit,
-  AfterViewInit,
-  ChangeDetectorRef,
-  Component,
-  OnDestroy,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ExpensesService } from '../../../services/expenses.service';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-
-import { CategoriesService } from '../../../services/categories.service';
-import { Category } from '../../../models/category.model';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
+
+import { ExpensesService } from '../../../services/expenses.service';
+import { Category } from '../../../models/category.model';
+
 import {
   addExpense,
   updateExpense,
 } from 'src/app/store/expenses/expenses.actions';
-import { AppState } from 'src/app/store/app.state';
+import { initCategories } from 'src/app/store/categories/categories.actions';
+
 import { selectExpenseByIndex } from 'src/app/store/expenses/expenses.selectors';
+import { selectAllCategories } from 'src/app/store/categories/categories.selectors';
 
 @Component({
   selector: 'app-expenses-edit',
@@ -31,19 +26,21 @@ export class ExpensesEditComponent implements OnInit, OnDestroy {
   indexToEdit!: number;
   editMode = false;
   expensesForm!: FormGroup;
+  categories$: Observable<Category[]> = this.store.select(selectAllCategories);
   categories!: Category[];
   routeSubscription!: Subscription;
 
   constructor(
     private expensesService: ExpensesService,
-    private categoriesService: CategoriesService,
     private router: Router,
     private route: ActivatedRoute,
     private store: Store<AppState>
   ) {}
 
   ngOnInit(): void {
-    this.categories = this.categoriesService.getCategories();
+    this.store.dispatch(initCategories());
+    this.categories$.subscribe((categories) => (this.categories = categories));
+
     this.expensesService.isFormOpen.next(true);
     this.routeSubscription = this.route.params.subscribe((params: Params) => {
       this.indexToEdit = +params['id'];

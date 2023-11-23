@@ -1,8 +1,9 @@
-import { Component, ElementRef, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
 
 import { Category } from 'src/app/models/category.model';
-import { AppState } from 'src/app/store/app.state';
+
 import {
   deleteCategory,
   editCategory,
@@ -32,7 +33,7 @@ export class CategoriesItemComponent implements OnInit {
   }
 
   onSaveEditCategory(ID: number, name: HTMLInputElement) {
-   
+   console.log(ID)
     this.store.dispatch(
       editCategory({ idToEdit: ID, editedCategory: name.value })
     );

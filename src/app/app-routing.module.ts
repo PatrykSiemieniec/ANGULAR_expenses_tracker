@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { NotFoundPageComponent } from './components/layout/not-found-page/not-found-page.component';
 
 const routes: Routes = [
   {
@@ -8,7 +7,6 @@ const routes: Routes = [
     redirectTo: '/expenses',
     pathMatch: 'full',
   },
- 
 ];
 
 @NgModule({

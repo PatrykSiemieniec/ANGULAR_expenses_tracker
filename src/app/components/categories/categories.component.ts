@@ -1,14 +1,13 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { Category } from '../../models/category.model';
-import { CategoriesService } from '../../services/categories.service';
-import { FormControl, FormGroup } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { AppState } from 'src/app/store/app.state';
+
+import { Category } from '../../models/category.model';
+
 import {
   addCategory,
   initCategories,
 } from 'src/app/store/categories/categories.actions';
-import { Observable, map } from 'rxjs';
 import { selectAllCategories } from 'src/app/store/categories/categories.selectors';
 
 @Component({
@@ -24,10 +23,7 @@ export class CategoriesComponent implements OnInit {
 
   avoidDuplicationMsg: string = '';
 
-  constructor(
-    private categoriesService: CategoriesService,
-    private store: Store<AppState>
-  ) {}
+  constructor(private store: Store<AppState>) {}
 
   ngOnInit(): void {
     this.store.dispatch(initCategories());
