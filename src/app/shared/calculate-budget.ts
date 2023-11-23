@@ -1,9 +1,5 @@
-export interface CalculatedBudget {
-  budgetPercent: number;
-  budgetPercentString: string;
-  isMoreThanBudget: boolean;
-  isCloseToBudget: boolean;
-}
+import { CalculatedBudget } from "./types";
+
 export const calculateBudget = (
   budget: number,
   totalExpenses: number

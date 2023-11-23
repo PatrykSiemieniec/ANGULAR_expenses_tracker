@@ -1,6 +1,17 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { Budget, SettingsService } from '../../services/settings.service';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
+import {
+  selectCalculatedBudgets,
+  selectCurrency,
+  selectSettings,
+} from 'src/app/store/settings/settings.selectors';
+import {
+  initSettings,
+  setBudget,
+  setCurrency,
+} from 'src/app/store/settings/settings.actions';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -9,39 +20,32 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./settings.component.css'],
 })
 export class SettingsComponent implements OnInit, OnDestroy {
-  constructor(private settingsService: SettingsService) {}
+  constructor(private store: Store<AppState>) {}
 
   @ViewChild('settings') settingsForm!: NgForm;
 
-  monthlyBudgetSubscription!: Subscription;
+  settings$ = this.store.select(selectSettings);
+  budget$ = this.store.select(selectCalculatedBudgets);
 
-  monthly!: number;
-  weekly!: number;
-  daily!: number;
+  currency$ = this.store.select(selectCurrency);
+  currencySubscription!: Subscription;
 
-  selectedCurrency: string = 'PLN';
+  selectedCurrency!: string;
 
   onSubmit() {
-    this.settingsService.setSettings(this.settingsForm.value.monthly);
+    this.store.dispatch(setBudget({ budget: this.settingsForm.value.monthly }));
   }
-  onSelect(){
-    this.settingsService.setCurrency(this.selectedCurrency);
+  onSelect() {
+    this.store.dispatch(setCurrency({ currency: this.selectedCurrency }));
   }
-  
 
   ngOnInit(): void {
-    this.monthlyBudgetSubscription = this.settingsService.monthly.subscribe(
-      (budget: Budget) => {
-        this.monthly = budget.monthly;
-        this.weekly = budget.weekly;
-        this.daily = budget.daily;
-      }
+    this.store.dispatch(initSettings());
+    this.currencySubscription = this.currency$.subscribe(
+      (currency) => (this.selectedCurrency = currency)
     );
-    this.settingsService.currency.subscribe((currency: string) => {
-      this.selectedCurrency = currency;
-    })
   }
   ngOnDestroy(): void {
-    this.monthlyBudgetSubscription.unsubscribe();
+    this.currencySubscription.unsubscribe();
   }
 }

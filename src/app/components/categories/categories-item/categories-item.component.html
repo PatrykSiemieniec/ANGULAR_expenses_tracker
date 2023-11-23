@@ -1,0 +1,24 @@
+<div class="input-group mb-3">
+  <input
+    class="form-control"
+    type="text"
+    [(ngModel)]="editedCategoryName"
+    #name
+    (input)="onEditCategory()"
+  />
+  <button
+    *ngIf="isEditingStarted"
+    class="btn btn-success bi bi-check-lg"
+    (click)="onSaveEditCategory(category.ID, name)"
+  ></button>
+  <button
+    *ngIf="!isEditingStarted"
+    class="btn btn-danger bi bi-trash3"
+    (click)="onDeleteCategory(category.ID)"
+  ></button>
+  <button
+    *ngIf="isEditingStarted"
+    class="btn btn-danger bi bi-x-lg"
+    (click)="onCancelEditCategory()"
+  ></button>
+</div>

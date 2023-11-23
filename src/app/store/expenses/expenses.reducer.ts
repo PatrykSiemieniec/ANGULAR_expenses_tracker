@@ -2,7 +2,6 @@ import { createReducer, on } from '@ngrx/store';
 import { Expense } from 'src/app/models/expenses.model';
 import {
   addExpense,
-  filterExpense,
   loadExpensesSuccess,
   removeExpense,
   updateExpense,

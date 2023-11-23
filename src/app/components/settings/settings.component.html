@@ -3,11 +3,11 @@
   <div class="row">
     <div class="col-12 d-flex justify-content-center">
       <form (ngSubmit)="onSubmit()" #settings="ngForm" class="col-8 col-sm-4">
-        <label class="form-label" for="monthBudget">Set Monthly Budget</label>
+        <label class="form-label" for="monthlyBudget">Set Monthly Budget</label>
         <input
           class="form-control"
           type="number"
-          id="monthlBudget"
+          id="monthlyBudget"
           ngModel
           name="monthly"
           required
@@ -20,13 +20,16 @@
           Save
         </button>
       </form>
-    
     </div>
     <div class="col-12 mt-4 d-flex justify-content-center">
-      
       <div class="col-8 col-sm-4">
         <label for="currency" class="form-label">Set Currency</label>
-        <select id="currency" class="form-select" [(ngModel)]="selectedCurrency" (ngModelChange)="onSelect()">
+        <select
+          id="currency"
+          class="form-select"
+          [(ngModel)]="selectedCurrency"
+          (ngModelChange)="onSelect()"
+        >
           <option value="PLN">PLN</option>
           <option value="USD">USD</option>
           <option value="EUR">EUR</option>
@@ -34,18 +37,25 @@
         </select>
       </div>
     </div>
-    
-    <div class="col-12 mt-4  ">
+
+    <div class="col-12 mt-4">
       <h3>Your settings summary</h3>
-      <div class="row row-gap-2">
+      <div class="row row-gap-2" *ngIf="budget$ | async as budget">
         <div class="col-12">
-          Monthly Budget: <strong>{{ monthly | currency : selectedCurrency }} </strong>
+          Monthly Budget:
+          <strong>{{ budget.monthly | currency : selectedCurrency }} </strong>
         </div>
         <div class="col-12">
-          Weekly Budget: ~ <strong>{{ weekly | currency : selectedCurrency }}</strong>
+          Weekly Budget: ~
+          <strong>{{ budget.weekly | currency : selectedCurrency }}</strong>
         </div>
-        <div class="col-12">Daily Budget: ~ <strong> {{ daily | currency : selectedCurrency }}</strong> </div>
-        <div class="col-12 mt-2">Currency: <strong> {{ selectedCurrency }}</strong></div>
+        <div class="col-12">
+          Daily Budget: ~
+          <strong> {{ budget.daily | currency : selectedCurrency }}</strong>
+        </div>
+        <div class="col-12 mt-2">
+          Currency: <strong> {{ currency$ | async }}</strong>
+        </div>
       </div>
     </div>
   </div>

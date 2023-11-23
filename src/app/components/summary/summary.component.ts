@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 
-import { Budget, SettingsService } from '../../services/settings.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import {
   selectDailyExpenses,
@@ -11,52 +10,75 @@ import {
 } from 'src/app/store/expenses/expenses.selectors';
 import { loadExpenses } from 'src/app/store/expenses/expenses.actions';
 import { AppState } from 'src/app/store/app.state';
-import {
-  CalculatedBudget,
-  calculateBudget,
-} from 'src/app/shared/calculate-budget';
-
+import { calculateBudget } from 'src/app/shared/calculate-budget';
+import { selectCalculatedBudgets } from 'src/app/store/settings/settings.selectors';
+import { initSettings } from 'src/app/store/settings/settings.actions';
+import { Budget, CalculatedBudget } from 'src/app/shared/types';
 @Component({
   selector: 'app-summary',
   templateUrl: './summary.component.html',
   styleUrls: ['./summary.component.css'],
 })
-export class SummaryComponent implements OnInit {
-  constructor(
-    private settingsService: SettingsService,
-    private store: Store<AppState>
-  ) {}
+export class SummaryComponent implements OnInit, OnDestroy {
+  constructor(private store: Store<AppState>) {}
 
   totalExpenses$!: Observable<number>;
   monthlyExpenses$!: Observable<number>;
   weeklyExpenses$!: Observable<number>;
   dailyExpenses$!: Observable<number>;
-
-  budget!: Budget;
+  budget$!: Observable<Budget>;
 
   monthlyBudget!: CalculatedBudget;
   weeklyBudget!: CalculatedBudget;
   dailyBudget!: CalculatedBudget;
+  budget!: Budget;
+
+  budgetSubscription!: Subscription;
+  monthlyBudgetSubscription!: Subscription;
+  weeklyBudgetSubscription!: Subscription;
+  dailyBudgetSubscription!: Subscription;
 
   ngOnInit(): void {
     this.store.dispatch(loadExpenses());
+    this.store.dispatch(initSettings());
     this.totalExpenses$ = this.store.select(selectExpensesPrices);
     this.monthlyExpenses$ = this.store.select(selectMonthExpenses);
     this.weeklyExpenses$ = this.store.select(selectWeekExpenses);
     this.dailyExpenses$ = this.store.select(selectDailyExpenses);
+    this.budget$ = this.store.select(selectCalculatedBudgets);
 
-    this.budget = this.settingsService.getSettings();
-
-    this.monthlyExpenses$.subscribe((monthlyExpense) => {
-      this.monthlyBudget = calculateBudget(this.budget.monthly, monthlyExpense);
+    this.budgetSubscription = this.budget$.subscribe((budget) => {
+      this.budget = budget;
     });
 
-    this.weeklyExpenses$.subscribe((weeklyExpense) => {
-      this.weeklyBudget = calculateBudget(this.budget.weekly, weeklyExpense);
-    });
+    this.monthlyBudgetSubscription = this.monthlyExpenses$.subscribe(
+      (monthlyExpense) => {
+        this.monthlyBudget = calculateBudget(
+          this.budget.monthly,
+          monthlyExpense
+        );
+      }
+    );
 
-    this.dailyExpenses$.subscribe((dailyExpense) => {
-      this.dailyBudget = calculateBudget(this.budget.weekly, dailyExpense);
-    });
+    this.weeklyBudgetSubscription = this.weeklyExpenses$.subscribe(
+      (weeklyExpense) => {
+        this.weeklyBudget = calculateBudget(this.budget.weekly, weeklyExpense);
+      }
+    );
+
+    this.dailyBudgetSubscription = this.dailyExpenses$.subscribe(
+      (dailyExpense) => {
+        this.dailyBudget = calculateBudget(this.budget.weekly, dailyExpense);
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+  
+    this.budgetSubscription.unsubscribe()
+    this.monthlyBudgetSubscription.unsubscribe()
+    this.weeklyBudgetSubscription.unsubscribe()
+    this.dailyBudgetSubscription.unsubscribe()
+
   }
 }

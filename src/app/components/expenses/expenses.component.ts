@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ExpensesService } from '../../services/expenses.service';
 
-import { Subscription, map } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import {
@@ -42,24 +42,29 @@ export class ExpensesComponent implements OnInit, OnDestroy {
     );
     this.store.dispatch(loadExpenses());
   }
+
   onRemove(index: number) {
     this.store.dispatch(removeExpense({ id: index }));
   }
+
   onAddExpense() {
     this.router.navigate(['new'], {
       relativeTo: this.route,
     });
     this.expensesService.isFormOpen.next(true);
   }
+
   onStartEditing(index: number) {
     this.router.navigate([index, 'edit'], { relativeTo: this.route });
     this.expensesService.isFormOpen.next(true);
   }
+
   filterExpenses() {
     this.allExpenses$ = this.store.select(
       selectFilteredExpenses(this.filterValue)
     );
   }
+
   onSelectFilterTime(time: string) {
     this.allExpenses$ = this.store.select(selectFilteredExpensesByTime(time));
   }

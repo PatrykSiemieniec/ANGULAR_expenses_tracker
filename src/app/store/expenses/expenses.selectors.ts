@@ -99,3 +99,18 @@ export const selectDailyExpenses = createSelector(
     }
   }
 );
+
+export const selectBudget = createSelector(
+  selectExpensesState,
+  (expenses: Expense[]) => {
+    const currentDate = new Date().getDate();
+    const filteredExpensesByDay = expenses.filter(
+      (item) => new Date(item.date).getDate() === currentDate
+    );
+    if (filteredExpensesByDay.length === 0) {
+      return 0;
+    } else {
+      return reducePrice(filteredExpensesByDay);
+    }
+  }
+);

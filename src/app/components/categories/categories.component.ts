@@ -2,6 +2,14 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Category } from '../../models/category.model';
 import { CategoriesService } from '../../services/categories.service';
 import { FormControl, FormGroup } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.state';
+import {
+  addCategory,
+  initCategories,
+} from 'src/app/store/categories/categories.actions';
+import { Observable, map } from 'rxjs';
+import { selectAllCategories } from 'src/app/store/categories/categories.selectors';
 
 @Component({
   selector: 'app-categories',
@@ -9,57 +17,38 @@ import { FormControl, FormGroup } from '@angular/forms';
   styleUrls: ['./categories.component.css'],
 })
 export class CategoriesComponent implements OnInit {
-  @ViewChild('newCategory') newCategory!: ElementRef;
-  categories!: Category[];
-  categoriesForm!: FormGroup;
-  selectedCategories: number[] = [];
-  isEditingStarted = false;
-  idToEdit!: number;
-  categoryNameToEdit!: string;
+  @ViewChild('newCategory') newCategory!: ElementRef<HTMLInputElement>;
 
-  constructor(private categoriesService: CategoriesService) {}
+  categories$ = this.store.select(selectAllCategories);
+  categories!: Category[];
+
+  avoidDuplicationMsg: string = '';
+
+  constructor(
+    private categoriesService: CategoriesService,
+    private store: Store<AppState>
+  ) {}
 
   ngOnInit(): void {
-    this.categories = this.categoriesService.getCategories();
-    this.categoriesService.categoriesChanges.subscribe((categories) => {
-      this.categories = categories;
-      this.updateFormControls();
-    });
-    this.updateFormControls();
-  }
-
-  private updateFormControls() {
-    const formControls: { [key: string]: FormControl } = {};
-    this.categories.forEach((category) => {
-      formControls[category.ID] = new FormControl(false);
-    });
-
-    this.categoriesForm = new FormGroup(formControls);
-  }
-
-  onEditCategory(ID: number, newCategory: HTMLInputElement) {
-    this.isEditingStarted = true;
-    this.idToEdit = ID;
-    this.categoryNameToEdit = newCategory.value;
-  }
-  onConfirmEditing() {
-    this.categoriesService.editCategory(this.idToEdit, this.categoryNameToEdit);
-    this.isEditingStarted = false;
-  }
-
-  onDelete() {
-    this.selectedCategories = Object.keys(this.categoriesForm.value)
-      .filter((key) => this.categoriesForm.value[key])
-      .map((key) => parseInt(key));
-
-    if (this.selectedCategories.length > 1) {
-      this.categoriesService.deleteCategories(this.selectedCategories);
-    } else if (this.selectedCategories.length === 1) {
-      this.categoriesService.deleteCategory(this.selectedCategories[0]);
-    }
+    this.store.dispatch(initCategories());
+    this.categories$.subscribe((categories) => (this.categories = categories));
   }
 
   onAdd() {
-    this.categoriesService.addCategory(this.newCategory.nativeElement.value);
+    const newCategory = this.newCategory.nativeElement.value;
+
+    const isCategoryDuplicate = this.categories
+      .map((item) => item.name)
+      .includes(newCategory);
+
+    if (isCategoryDuplicate) {
+      this.avoidDuplicationMsg = `Category of name ${newCategory} exists. `;
+      return;
+    }
+    this.avoidDuplicationMsg = '';
+    this.store.dispatch(addCategory({ category: newCategory }));
+  }
+  onChange() {
+    this.avoidDuplicationMsg = '';
   }
 }

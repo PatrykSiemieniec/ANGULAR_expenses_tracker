@@ -96,8 +96,8 @@
     </div>
   </div>
 </div>
-<div class="container-sm text-center mt-5">
-  <div class="row align-items-center" *ngIf="!allExpenses$">
+<div class="container-sm text-center mt-5" *ngIf="allExpenses$ | async as expenses">
+  <div class="row align-items-center" *ngIf="!(expenses.length > 0)" >
     <h2 class="col-12">Add some expenses!</h2>
   </div>
 </div>

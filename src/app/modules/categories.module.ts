@@ -2,7 +2,8 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CategoriesComponent } from '../components/categories/categories.component';
 import { RouterModule, Routes } from '@angular/router';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CategoriesItemComponent } from '../components/categories/categories-item/categories-item.component';
 
 const routes: Routes = [
   {
@@ -12,8 +13,8 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [CategoriesComponent],
-  imports: [RouterModule.forChild(routes), CommonModule, ReactiveFormsModule],
+  declarations: [CategoriesComponent, CategoriesItemComponent],
+  imports: [RouterModule.forChild(routes), CommonModule, FormsModule],
   exports: [CategoriesComponent],
 })
 export class CategoriesModule {}

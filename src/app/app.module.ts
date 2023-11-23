@@ -18,9 +18,12 @@ import { expensesReducer } from './store/expenses/expenses.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { ExpensesEffects } from './store/expenses/expenses.effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { settingsReducer } from './store/settings/settings.reducer';
+import { categoriesReducer } from './store/categories/categories.reducer';
+
 
 @NgModule({
-  declarations: [AppComponent, NotFoundPageComponent, HeaderComponent],
+  declarations: [AppComponent, NotFoundPageComponent, HeaderComponent ],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -32,6 +35,8 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
     BrowserAnimationsModule,
     StoreModule.forRoot({
       expenses: expensesReducer,
+      categories: categoriesReducer,
+      settings: settingsReducer,
     }),
     EffectsModule.forRoot([ExpensesEffects]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: !isDevMode() }),
